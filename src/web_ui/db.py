@@ -24,12 +24,20 @@ _agent_dir = Path(__file__).resolve().parents[1] / "data_collection"
 if str(_agent_dir) not in sys.path:
     sys.path.insert(0, str(_agent_dir))
 
-from data_collection_agent import (  # noqa: E402
-    fetch_all,
-    fetch_since,
-    get_connection,
-    insert_reading,
-)
+try:
+    from src.data_collection.data_collection_agent import (  # type: ignore
+        fetch_all,
+        fetch_since,
+        get_connection,
+        insert_reading,
+    )
+except ImportError:  # pragma: no cover - direct script execution fallback
+    from data_collection_agent import (  # type: ignore
+        fetch_all,
+        fetch_since,
+        get_connection,
+        insert_reading,
+    )
 
 __all__ = [
     "get_connection",

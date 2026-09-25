@@ -7,7 +7,10 @@ MVP scope: a single "Live Status" tab (see live_status.py). Run directly:
 
 from dash import Dash, html
 
-import live_status
+try:
+    from src.web_ui import live_status
+except ImportError:  # pragma: no cover - direct script execution fallback
+    import live_status
 
 app = Dash(__name__)
 app.layout = html.Div(

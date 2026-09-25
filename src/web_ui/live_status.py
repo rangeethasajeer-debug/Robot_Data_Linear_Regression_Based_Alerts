@@ -5,7 +5,10 @@ import plotly.graph_objects as go
 from dash import Dash, Input, Output, State, ctx, dcc, html
 from dash.exceptions import PreventUpdate
 
-import db
+try:
+    from src.web_ui import db
+except ImportError:  # pragma: no cover - direct script execution fallback
+    import db
 
 AXIS_COLUMNS = [f"axis_{i}" for i in range(1, 9)]
 # Same validated palette, in the same axis order, as the notebook. Each joint keeps
