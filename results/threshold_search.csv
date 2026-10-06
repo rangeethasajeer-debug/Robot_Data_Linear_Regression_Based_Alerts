@@ -1,0 +1,13 @@
+alert_quantile,error_quantile,T_s,calibration_alerts,calibration_errors,worst_axis_alerts_per_hour,worst_axis_errors_per_hour,meets_budget,selected
+0.95,0.99,2,278,2,15.89572953361005,0.24837077396265703,False,False
+0.95,0.99,6,41,0,6.4576401230290825,0.0,False,False
+0.95,0.99,10,9,0,1.9869661917012562,0.0,False,False
+0.95,0.99,19,5,0,1.241853869813285,0.0,False,False
+0.975,0.995,2,54,1,3.4771908354771983,0.24837077396265703,False,False
+0.975,0.995,6,7,0,1.7385954177385992,0.0,False,False
+0.975,0.995,10,5,0,1.241853869813285,0.0,False,False
+0.975,0.995,19,3,0,0.745112321887971,0.0,True,True
+0.99,0.999,2,2,0,0.24837077396265703,0.0,True,False
+0.99,0.999,6,0,0,0.0,0.0,True,False
+0.99,0.999,10,0,0,0.0,0.0,True,False
+0.99,0.999,19,0,0,0.0,0.0,True,False

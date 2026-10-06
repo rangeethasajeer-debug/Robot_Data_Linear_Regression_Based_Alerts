@@ -1,0 +1,87 @@
+{
+  "training_source": "cloud",
+  "training_rows": 23803,
+  "first_training_time": "2022-10-17T12:18:23.660000+00:00",
+  "last_training_time": "2022-10-18T01:52:08.870000+00:00",
+  "raw_unit": "A",
+  "scaled_unit": "dimensionless",
+  "zscore_ddof": 0,
+  "axes": {
+    "axis_1": {
+      "min_A": 0.0,
+      "max_A": 23.6093,
+      "mean_A": 0.8042427988068732,
+      "standard_deviation_A": 2.2930694161649203,
+      "zscore_scale_A": 2.2930694161649203,
+      "minmax_scale": 0.0423561901454088,
+      "minmax_offset": 0.0
+    },
+    "axis_2": {
+      "min_A": 0.0,
+      "max_A": 51.66052,
+      "mean_A": 3.952105120783094,
+      "standard_deviation_A": 7.052266575953211,
+      "zscore_scale_A": 7.052266575953211,
+      "minmax_scale": 0.019357141585102124,
+      "minmax_offset": 0.0
+    },
+    "axis_3": {
+      "min_A": 0.0,
+      "max_A": 41.43384,
+      "mean_A": 2.9904689102214004,
+      "standard_deviation_A": 5.290701851576214,
+      "zscore_scale_A": 5.290701851576214,
+      "minmax_scale": 0.024134861745857977,
+      "minmax_offset": 0.0
+    },
+    "axis_4": {
+      "min_A": 0.0,
+      "max_A": 15.6663,
+      "mean_A": 0.6811250002100575,
+      "standard_deviation_A": 1.6405712815725686,
+      "zscore_scale_A": 1.6405712815725686,
+      "minmax_scale": 0.06383128115764411,
+      "minmax_offset": 0.0
+    },
+    "axis_5": {
+      "min_A": 0.0,
+      "max_A": 20.75076,
+      "mean_A": 1.0513347325967315,
+      "standard_deviation_A": 2.1854292657506234,
+      "zscore_scale_A": 2.1854292657506234,
+      "minmax_scale": 0.04819100601616519,
+      "minmax_offset": 0.0
+    },
+    "axis_6": {
+      "min_A": 0.0,
+      "max_A": 20.10552,
+      "mean_A": 0.6539819505944628,
+      "standard_deviation_A": 1.8767389863034571,
+      "zscore_scale_A": 1.8767389863034571,
+      "minmax_scale": 0.04973758450415608,
+      "minmax_offset": 0.0
+    },
+    "axis_7": {
+      "min_A": 0.0,
+      "max_A": 8.10848,
+      "mean_A": 0.9552813094988025,
+      "standard_deviation_A": 2.251275394118941,
+      "zscore_scale_A": 2.251275394118941,
+      "minmax_scale": 0.12332767670389518,
+      "minmax_offset": 0.0
+    },
+    "axis_8": {
+      "min_A": 0.0,
+      "max_A": 5.04235,
+      "mean_A": 0.11146586186615133,
+      "standard_deviation_A": 0.4402087531795495,
+      "zscore_scale_A": 0.4402087531795495,
+      "minmax_scale": 0.19832022767162139,
+      "minmax_offset": 0.0
+    }
+  },
+  "formula": {
+    "normalized": "raw_A * minmax_scale + minmax_offset",
+    "standardized": "(raw_A - mean_A) / zscore_scale_A"
+  }
+}

@@ -13,6 +13,25 @@ import pandas as pd
 AXIS_COLUMNS = [f"Axis #{axis_number}" for axis_number in range(1, 9)]
 OUTPUT_COLUMNS = ["Trait", *AXIS_COLUMNS, "Time"]
 
+def init_stream_table(conn):
+    """Create the synthetic-test table if it does not already exist.
+
+    Reuse AXIS_COLUMNS, converting CSV names such as "Axis #1" to the
+    database names such as "axis_1" used by StreamingSimulator._to_record.
+    The caller manages the connection and commits the transaction.
+    """
+    columns = ", ".join(
+        f"{column.lower().replace(' #', '_')} DOUBLE PRECISION NOT NULL"
+        for column in AXIS_COLUMNS
+    )
+    conn.execute(f"""CREATE TABLE IF NOT EXISTS pm_lab_scaled_stream (
+        run_id UUID NOT NULL, sequence BIGINT NOT NULL,
+        trait TEXT NOT NULL, reading_time TIMESTAMPTZ NOT NULL,
+        {columns}, normalized_values JSONB NOT NULL,
+        standardized_values JSONB NOT NULL,
+        received_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+        PRIMARY KEY(run_id, sequence))""")
+
 
 class StreamingSimulator:
     """Replay robot readings as individual controller messages."""

@@ -1,0 +1,70 @@
+{
+  "source": "cloud",
+  "executed_at_UTC": "2026-10-05T23:20:54.877253+00:00",
+  "cloud_training_verified_against_csv": true,
+  "source_csv_sha256": "4bb00cf083629d9ec2d961fc9432723bc52b179c217a37fe251eb5aa410d69d0",
+  "rows": 39672,
+  "fit_rows": 23803,
+  "calibration_rows": 7934,
+  "holdout_rows": 7935,
+  "source_start_UTC": "2022-10-17T12:18:23.660000+00:00",
+  "source_end_UTC": "2022-10-18T10:44:58.628000+00:00",
+  "units": "A (amperes); kWh unavailable without electrical conversion inputs",
+  "idle_fraction": 0.6424430328695302,
+  "cadence": {
+    "median_interval_s": 1.896,
+    "p95_interval_s": 2.007,
+    "max_gap_s": 3.0105000000000004,
+    "largest_gap_s": 402.538,
+    "gaps_over_limit": 751
+  },
+  "synthetic": {
+    "seed": 42,
+    "method": "permuted contiguous fitting-data blocks",
+    "block_size": 8,
+    "decorrelation_lag": 3,
+    "rows": 23803,
+    "cadence_seconds": 1.896,
+    "start_UTC": "2022-10-18T10:45:00.524000+00:00",
+    "training_rows_used": 23803,
+    "note": "Empirical surrogate; original values reused in a new block order. Stress injections change moments."
+  },
+  "origin_UTC": "2022-10-17T12:18:23.660000+00:00",
+  "cloud_stream": {
+    "run_id": "7b1542ef-e103-413d-b654-f3d5e897161c",
+    "inserted_rows": 240,
+    "queried_rows": 240,
+    "table": "pm_lab_scaled_stream",
+    "source_csv": "synthetic_stress.csv",
+    "replay_speed": 20.0,
+    "wall_seconds": 62.45738083298784,
+    "requested_pause_total_s": 22.657199999999996,
+    "event_span_seconds": 453.144,
+    "scaling_training_source": "cloud",
+    "scaling_training_rows": 23803,
+    "raw_and_scaled_values_verified": true,
+    "training_table_modified": false,
+    "reused_functions": [
+      "fetch_all",
+      "get_connection",
+      "_query",
+      "StreamingSimulator.run",
+      "LiveDashboard.update"
+    ],
+    "original_dashboard_used": true
+  },
+  "split_time_ranges": {
+    "fit": [
+      "2022-10-17T12:18:23.660000+00:00",
+      "2022-10-18T01:52:08.870000+00:00"
+    ],
+    "calibration": [
+      "2022-10-18T01:52:10.757000+00:00",
+      "2022-10-18T06:18:17.080000+00:00"
+    ],
+    "holdout": [
+      "2022-10-18T06:18:18.955000+00:00",
+      "2022-10-18T10:44:58.628000+00:00"
+    ]
+  }
+}

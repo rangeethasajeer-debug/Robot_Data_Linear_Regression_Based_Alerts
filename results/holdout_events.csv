@@ -1,0 +1,1 @@
+event_id,axis,severity,start_time,trigger_time,end_time,duration_s,detection_delay_s,threshold_A,peak_residual_A,sample_count,end_reason,right_censored

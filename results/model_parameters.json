@@ -1,0 +1,177 @@
+{
+  "origin_UTC": "2022-10-17T12:18:23.660000+00:00",
+  "units": "A",
+  "coefficients": [
+    {
+      "axis": "axis_1",
+      "slope_A_per_s": 8.813174520247539e-06,
+      "slope_A_per_hour": 0.03172742827289114,
+      "intercept_A": 0.5859470781860492,
+      "fit_R2": 0.0028636832462346495,
+      "origin_UTC": "2022-10-17T12:18:23.660000+00:00"
+    },
+    {
+      "axis": "axis_2",
+      "slope_A_per_s": 4.151152464652436e-05,
+      "slope_A_per_hour": 0.1494414887274877,
+      "intercept_A": 2.9238958000708557,
+      "fit_R2": 0.006716987974688338,
+      "origin_UTC": "2022-10-17T12:18:23.660000+00:00"
+    },
+    {
+      "axis": "axis_3",
+      "slope_A_per_s": 2.737127806204204e-05,
+      "slope_A_per_hour": 0.09853660102335134,
+      "intercept_A": 2.312502888427633,
+      "fit_R2": 0.005188695908094121,
+      "origin_UTC": "2022-10-17T12:18:23.660000+00:00"
+    },
+    {
+      "axis": "axis_4",
+      "slope_A_per_s": 8.030081886610839e-06,
+      "slope_A_per_hour": 0.02890829479179902,
+      "intercept_A": 0.48222589659481396,
+      "fit_R2": 0.004644557891716916,
+      "origin_UTC": "2022-10-17T12:18:23.660000+00:00"
+    },
+    {
+      "axis": "axis_5",
+      "slope_A_per_s": 1.0598701521793204e-05,
+      "slope_A_per_hour": 0.038155325478455536,
+      "intercept_A": 0.7888128477719786,
+      "fit_R2": 0.0045595969743518205,
+      "origin_UTC": "2022-10-17T12:18:23.660000+00:00"
+    },
+    {
+      "axis": "axis_6",
+      "slope_A_per_s": 6.85998248298415e-06,
+      "slope_A_per_hour": 0.02469593693874294,
+      "intercept_A": 0.4840653313185298,
+      "fit_R2": 0.00259019764370072,
+      "origin_UTC": "2022-10-17T12:18:23.660000+00:00"
+    },
+    {
+      "axis": "axis_7",
+      "slope_A_per_s": 1.1102864244010517e-05,
+      "slope_A_per_hour": 0.039970311278437864,
+      "intercept_A": 0.6802716923020491,
+      "fit_R2": 0.004715279624930235,
+      "origin_UTC": "2022-10-17T12:18:23.660000+00:00"
+    },
+    {
+      "axis": "axis_8",
+      "slope_A_per_s": 1.2874727027290506e-06,
+      "slope_A_per_hour": 0.004634901729824582,
+      "intercept_A": 0.07957612896954416,
+      "fit_R2": 0.0016582627840684427,
+      "origin_UTC": "2022-10-17T12:18:23.660000+00:00"
+    }
+  ],
+  "thresholds": [
+    {
+      "axis": "axis_1",
+      "alert_quantile": 0.975,
+      "error_quantile": 0.995,
+      "T_s": 19,
+      "MinC_A": 2.8681207210912967,
+      "MaxC_A": 10.05794181097767,
+      "calibration_alerts": 0,
+      "calibration_errors": 0,
+      "alert_events_per_hour": 0.0,
+      "error_events_per_hour": 0.0,
+      "exposure_hours": 4.026238611111111
+    },
+    {
+      "axis": "axis_2",
+      "alert_quantile": 0.975,
+      "error_quantile": 0.995,
+      "T_s": 19,
+      "MinC_A": 9.658223946706034,
+      "MaxC_A": 25.89698287571944,
+      "calibration_alerts": 0,
+      "calibration_errors": 0,
+      "alert_events_per_hour": 0.0,
+      "error_events_per_hour": 0.0,
+      "exposure_hours": 4.026238611111111
+    },
+    {
+      "axis": "axis_3",
+      "alert_quantile": 0.975,
+      "error_quantile": 0.995,
+      "T_s": 19,
+      "MinC_A": 7.1590438463910875,
+      "MaxC_A": 20.141269773279962,
+      "calibration_alerts": 0,
+      "calibration_errors": 0,
+      "alert_events_per_hour": 0.0,
+      "error_events_per_hour": 0.0,
+      "exposure_hours": 4.026238611111111
+    },
+    {
+      "axis": "axis_4",
+      "alert_quantile": 0.975,
+      "error_quantile": 0.995,
+      "T_s": 19,
+      "MinC_A": 1.7857150537302113,
+      "MaxC_A": 7.187075134227599,
+      "calibration_alerts": 0,
+      "calibration_errors": 0,
+      "alert_events_per_hour": 0.0,
+      "error_events_per_hour": 0.0,
+      "exposure_hours": 4.026238611111111
+    },
+    {
+      "axis": "axis_5",
+      "alert_quantile": 0.975,
+      "error_quantile": 0.995,
+      "T_s": 19,
+      "MinC_A": 3.4565052326674874,
+      "MaxC_A": 7.943833519365713,
+      "calibration_alerts": 0,
+      "calibration_errors": 0,
+      "alert_events_per_hour": 0.0,
+      "error_events_per_hour": 0.0,
+      "exposure_hours": 4.026238611111111
+    },
+    {
+      "axis": "axis_6",
+      "alert_quantile": 0.975,
+      "error_quantile": 0.995,
+      "T_s": 19,
+      "MinC_A": 1.6403271165974098,
+      "MaxC_A": 8.210763881471872,
+      "calibration_alerts": 0,
+      "calibration_errors": 0,
+      "alert_events_per_hour": 0.0,
+      "error_events_per_hour": 0.0,
+      "exposure_hours": 4.026238611111111
+    },
+    {
+      "axis": "axis_7",
+      "alert_quantile": 0.975,
+      "error_quantile": 0.995,
+      "T_s": 19,
+      "MinC_A": 6.26705186800665,
+      "MaxC_A": 6.860696034673897,
+      "calibration_alerts": 0,
+      "calibration_errors": 0,
+      "alert_events_per_hour": 0.0,
+      "error_events_per_hour": 0.0,
+      "exposure_hours": 4.026238611111111
+    },
+    {
+      "axis": "axis_8",
+      "alert_quantile": 0.975,
+      "error_quantile": 0.995,
+      "T_s": 19,
+      "MinC_A": 0.048094081725545794,
+      "MaxC_A": 2.9626059683042505,
+      "calibration_alerts": 3,
+      "calibration_errors": 0,
+      "alert_events_per_hour": 0.745112321887971,
+      "error_events_per_hour": 0.0,
+      "exposure_hours": 4.026238611111111
+    }
+  ],
+  "max_gap_s": 3.0105000000000004
+}

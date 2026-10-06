@@ -75,7 +75,7 @@ plotly==7.1.0
 prometheus-client==0.26.0
 prompt-toolkit==3.0.53
 psutil==7.2.2
-psycopg2-binary==2.9.10
+psycopg[binary]==3.3.6
 ptyprocess==0.7.0
 pure-eval==0.2.4
 pycparser==3.0
@@ -88,6 +88,7 @@ pyyaml==6.0.3
 pyzmq==27.2.0
 referencing==0.37.0
 requests==2.34.2
+scikit-learn>=1.6.1
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 rfc3987-syntax==1.1.0

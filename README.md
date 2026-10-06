@@ -1,193 +1,152 @@
-# Robot Predictive Maintenance — Data Streaming and Visualization
+# Linear Regression and Maintenance Alerts
 
-**CSCN8010 — Foundations of Machine Learning Frameworks · Group 4**
+This project explores predictive-maintenance alerts for an eight-axis Kawasaki materials-handling robot. It fits a separate time-based linear regression model to each axis's current readings, then looks for sustained positive deviations from those predictions. The workflow combines historical Neon PostgreSQL data, synthetic alert scenarios, saved analysis results, and a short database-backed streaming demonstration.
 
-| Member    | Track                                   |
-| --------- | --------------------------------------- |
-| Nnamdi    | Predictive analytics, integration, repo |
-| Davis     | Streaming simulator                     |
-| Carlos    | Dashboard and web app                   |
-| Rangeetha | Neon database and data access layer     |
+## Results at a Glance
+
+- The source CSV contains **39,672 readings** collected from 2022-10-17 to 2022-10-18, over about **22.4 hours**, at a median interval of **1.896 seconds**.
+- The robot is fully idle in **64.2%** of rows. The source export has columns for 14 axes, but only axes 1–8 contain readings.
+- The notebook verifies the canonical Neon rows against the supplied CSV, then splits them by time: **23,803 fit**, **7,934 calibration**, and **7,935 holdout** rows.
+- The eight time-only regression models have very low fit $R^2$ values (about 0.002–0.007); holdout $R^2$ is negative for all axes. They are weak current forecasts, so the project uses them as a baseline for studying residual-based alert rules, not as a reliable production predictor.
+- The selected rule uses the 97.5th and 99.5th percentiles of calibration residuals, with **19 seconds of persistence**. It generated no sustained Alert or Error events on the later holdout segment.
+- Synthetic evaluation detected **all 16 of 16** injected sustained Alert and Error patterns and ignored **all 8 of 8** isolated spikes. Detected events were reported after about **20.9 seconds**, including sampling cadence after the configured 19-second persistence period.
+- The optional Neon stream demo inserted and queried back **240 of 240** synthetic readings, verified their raw and scaled values, and left the historical training table unchanged. The notebook also checks that the existing Dash layout responds successfully.
+- The dataset has no confirmed failure labels and spans only one day. The results demonstrate rule behavior; they do not establish real-world fault prediction accuracy.
+
+## Repository Layout
+
+```text
+.
+├── DataStreamVisualization_Workshop.ipynb  # earlier streaming and dashboard workshop
+├── LinearRegression_with_Alerts.ipynb      # regression, alert analysis, synthetic tests, stream demo
+├── data/
+│   ├── RMBR4-2_export_test.csv              # 39,672 original robot readings
+│   ├── synthetic_ground_truth.csv           # synthetic scenario labels
+│   ├── synthetic_normal.csv                 # baseline-like test stream
+│   ├── synthetic_stress.csv                 # injected stress test stream
+│   └── *_normalized.csv / *_standardized.csv# scaled synthetic views
+├── results/
+│   ├── plots/                               # regression, residual, threshold, alert plots
+│   ├── regression_metrics.csv               # fit/calibration/holdout model metrics
+│   ├── thresholds.csv                       # selected per-axis alert/error limits
+│   ├── calibration_events.csv               # events found during threshold tuning
+│   ├── holdout_events.csv                    # events found on later real readings
+│   ├── synthetic_*_events.csv                # synthetic event logs
+│   ├── synthetic_evaluation.csv               # expected-versus-detected scenarios
+│   ├── stream_predictions.csv                # local stream predictions and residuals
+│   ├── cloud_stream_*.csv                    # optional Neon stream-demo outputs
+│   └── run_metadata.json                     # dataset, split, and run provenance
+├── src/
+│   ├── data_collection/
+│   │   ├── data_collection_agent.py          # Neon connections and data access
+│   │   └── streaming_simulator.py             # CSV replay and synthetic stream table
+│   ├── database-service/
+│   │   └── migrate_schema.py                  # staged robot_readings table migration
+│   └── web_ui/                                # shared axis definitions and Dash dashboard
+├── pyproject.toml
+└── requirements.txt
+```
 
 ## Setup
 
-Requires **Python 3.13**. The project is managed with [uv](https://docs.astral.sh/uv/), which
-installs the right Python version for you.
+Requires **Python 3.13 or newer**, a Neon PostgreSQL database, and access to the canonical `robot_readings` table. Run commands from the repository root; the notebook and data-access code resolve files and `.env` relative to it.
 
-### 1. Install uv
+### Install dependencies
 
-```bash
-# macOS / Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Windows (PowerShell)
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-### 2. Get the code and its dependencies
+With [uv](https://docs.astral.sh/uv/):
 
 ```bash
-git clone https://github.com/Namypark/DATASTREAMVISUALIZATION-GROUP4.git
-cd DATASTREAMVISUALIZATION-GROUP4
 uv sync
+uv run jupyter lab
 ```
 
-`uv sync` reads `pyproject.toml` and `uv.lock`, creates a `.venv` with Python 3.13, and installs
-every pinned dependency.
+Or with pip:
 
-### 3. Add the database connection string
+```bash
+python3.13 -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+jupyter lab
+```
 
-The notebook reads from a shared Neon PostgreSQL database. Create a file called `.env` in the
-project root:
+Open `LinearRegression_with_Alerts.ipynb` and run the cells from top to bottom. The first analysis section requires a reachable Neon database and a `robot_readings` table containing the canonical CSV snapshot. The notebook verifies the table's rows against `data/RMBR4-2_export_test.csv` before fitting any models.
+
+Create a `.env` file in the repository root with the database connection string:
 
 ```text
 DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
 ```
 
-Ask a team member for the value. **`.env` is git-ignored and must never be committed.**
+Keep credentials private; never commit `.env` or an archive containing it. If the course requires submitting database configuration, send it only through the instructor-approved channel. If email is required, use a password-protected archive and communicate its password separately. 
+The default notebook run writes 240 synthetic readings to the separate `pm_lab_scaled_stream` table for its streaming demonstration. Set `PM_CLOUD_DEMO=0` in `.env` to skip only that write-and-query demo; historical model training still requires Neon. `PM_REPLAY_SPEED=20` controls the requested replay pause relative to the source cadence; `1` requests the original cadence. Database and chart processing add wall-clock time.
 
-### 4. Run it
 
-```bash
-uv run jupyter lab
-```
 
-Then open `DataStreamVisualization_Workshop.ipynb` and run it top to bottom. Start Jupyter from the
-project root — the notebook resolves its paths relative to the working directory.
+## How It Works
 
-**A full run takes about 80 seconds**, 60 of which is Step 2 streaming at its 2-second interval.
+1. **Load and validate history.** The notebook reads the canonical 8-axis current data from Neon, compares it with the supplied CSV, checks timestamps and values, and sorts readings chronologically. Zero-current rows are retained because they represent idle time.
+2. **Split by time.** The earliest 60% fits the models, the next 20% calibrates thresholds, and the final 20% is held back for evaluation. The holdout data does not determine either model coefficients or alert limits.
+3. **Fit per-axis models.** Each axis gets a separate ordinary least-squares linear model using elapsed time as its only input. Predictions provide an axis-specific baseline; residual is `actual current - predicted current` in amperes.
+4. **Calibrate sustained-event rules.** Positive residual quantiles from the calibration segment set independent Alert and Error limits for each axis. Candidate quantile pairs and persistence periods are compared against calibration event-rate targets.
+5. **Evaluate.** The chosen rules are applied to the real holdout and to deterministic synthetic normal/stress scenarios, including sustained increases and isolated spikes. Tables and plots are written to `results/`.
+6. **Demonstrate streaming.** When enabled, synthetic readings are scaled using values derived from the verified Neon training data, written to `pm_lab_scaled_stream`, and queried back. The notebook verifies all 240 records and their raw/scaled values, then reuses the existing live-chart helpers to create `results/workshop_current_chart.html`. It also checks the existing Dash app's layout endpoint without launching a server. The original `robot_readings` history is not modified by this demo.
 
-To check it runs cleanly without opening Jupyter:
+## Alert and Error Rules
 
-```bash
-uv run python -m nbconvert --to notebook --execute \
-  DataStreamVisualization_Workshop.ipynb --output-dir /tmp/check
-```
+The model residual is the difference between measured and predicted current. Only **positive** residual excursions are considered: lower-than-predicted current does not trigger these rules.
 
-It writes the executed copy to `/tmp/check` and leaves your version untouched. Any cell that raises
-stops the run and reports the error.
-
-### Alternative: pip instead of uv
-
-```bash
-python3.13 -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-jupyter lab
-```
-
-`requirements.txt` holds the same pinned versions. Python 3.13 is required either way — the code
-uses syntax that older versions reject.
-
-### Troubleshooting
-
-| Problem | Cause |
+| Rule | Meaning |
 |---|---|
-| `ModuleNotFoundError` on the first cell | Jupyter wasn't started from the project root |
-| `DATABASE_URL is missing` | No `.env` file, or it's not in the project root |
-| Step 2 takes about a minute | Expected — it streams at the specified 2-second interval |
+| **Alert** | Residual reaches or exceeds the axis-specific `MinC_A` limit continuously for at least 19 seconds. |
+| **Error** | Residual reaches or exceeds the higher axis-specific `MaxC_A` limit continuously for at least 19 seconds. |
+| **Gap reset** | A sampling gap longer than 3.0105 seconds breaks the excursion; missing samples are not treated as evidence that high current persisted. |
+| **Spike handling** | A short, isolated high reading is not enough to create a sustained event. |
 
-## The problem
+`MinC_A` and `MaxC_A` are residuals above the regression prediction, not absolute current limits. The selected limits are axis-specific:
 
-A materials-handling robot failed and took **480 minutes of production** with it. The cause was wear
-in a torque tube. Nobody saw it coming, because there was no way to watch the robot's health while
-it ran — maintenance could only react after a breakdown.
+| Axis | Alert `MinC_A` (A) | Error `MaxC_A` (A) |
+|---|---:|---:|
+| 1 | 2.868 | 10.058 |
+| 2 | 9.658 | 25.897 |
+| 3 | 7.159 | 20.141 |
+| 4 | 1.786 | 7.187 |
+| 5 | 3.457 | 7.944 |
+| 6 | 1.640 | 8.211 |
+| 7 | 6.267 | 6.861 |
+| 8 | 0.048 | 2.963 |
 
-This project builds the monitoring tool that would have seen it: it reads the electrical current
-each joint draws, stores every reading in a cloud database, shows them on a live dashboard, and
-flags readings that suggest something is going wrong.
+Threshold selection compared 95/99, 97.5/99.5, and 99/99.9 residual-percentile pairs across several persistence durations. The chosen 97.5/99.5 pair with 19 seconds met the notebook's calibration targets of no more than 1 Alert per hour and 0.25 Errors per hour on any axis. These are lab tuning targets, not operational service-level guarantees. An Alert or Error is a signal for investigation, not proof of component failure.
 
-## The data
+## Plots
 
-`data/RMBR4-2_export_test.csv` — one Kawasaki materials-handling robot, recorded 17–18 October 2022.
+The notebook regenerates these PNGs under `results/plots/`. When the cloud stream demo is enabled, it also writes the interactive chart to `results/workshop_current_chart.html`.
 
-- **39,672 readings** taken roughly every 2 seconds across 22.5 hours
-- Each reading is the current in amps for eight joints
-- The export format has fourteen axis columns, but this robot has eight; columns 9–14 are empty in
-  every row
-- Supplied as course material for CSCN8010. Not a public dataset, so no external link or licence
-  applies
+**Per-axis regression fits and later observations**
 
-## What we found
+![Eight time-only regression fits](results/plots/regressions.png)
 
-- **The robot is idle 64.2% of the time.** Any average that includes idle readings measures the
-  production schedule rather than the machine.
-- **Two joints do most of the work.** Axes 2 and 3 draw 62% of all current.
-- **There is a three-hour production stoppage** on 18 October (03:00–06:00 UTC), during which the
-  controller kept reporting normally. A stopped production line and a failed monitoring system look
-  identical on a current chart and mean entirely different things.
-- **No degradation is present.** Total active current moves from 28.5A to 28.3A across the window —
-  0.6%, which is noise. 22.5 hours is far too short to reveal wear that develops over months. What
-  this delivers is the instrument that would catch it under continuous collection.
-- **Ranking anomalies by z-score points at the wrong joint.** The score saturates at `(n-1)/√n`
-  (5.2947 for our 30-reading window), and it measures deviation relative to each joint's own
-  baseline. Ranked by current above baseline instead, axis 2 carries 7,219A of excess against axis
-  8's 1,534A.
+**Calibration residual distributions and chosen limits**
 
-Full reasoning is in the notebook's talking points and findings cells.
+![Residual distributions with Alert and Error limits](results/plots/residual_distributions.png)
 
-## Notebooks
+**Threshold sensitivity and calibration event-rate budget**
 
-| File                                     | Contents                                           |
-| ---------------------------------------- | -------------------------------------------------- |
-| `DataStreamVisualization_Workshop.ipynb` | Our submission — all four steps, code and write-up |
-| `instructor_material.ipynb`              | The instructor's brief, kept for reference         |
+![Threshold sensitivity comparison](results/plots/threshold_sensitivity.png)
 
-## Project structure
+**Residuals over time with Alert and Error boundaries**
 
-```text
-.
-├── data/                              # the robot readings CSV
-├── src/
-│   ├── data_collection/
-│   │   ├── data_collection_agent.py   # get_connection, insert_reading, fetch_all, fetch_since
-│   │   └── streaming_simulator.py     # replays the CSV as a live controller feed
-│   ├── database-service/
-│   │   └── migrate_schema.py          # one-off schema rebuild: create / load / verify / swap
-│   └── web_ui/                        # standalone Dash dashboard
-└── DataStreamVisualization_Workshop.ipynb
-```
+![Residual time series](results/plots/residual_time.png)
 
-## The standalone dashboard
+**Synthetic alert/error scenario overlays**
 
-Besides the charts inside the notebook, `src/web_ui/` holds a Dash web app built on the same
-database layer. It runs independently of the notebook:
+![Synthetic alert and error overlay](results/plots/alert_error_overlay.png)
 
-```bash
-uv run python src/web_ui/web_ui_interface.py
-```
+## Limitations
 
-Then open <http://127.0.0.1:8050/>. Stop it with `Ctrl+C`.
-
-It replays stored readings from the same starting point as the notebook's Step 2, one reading every
-2 seconds, in the same colours — so a joint looks the same in both views.
-
-- The chart trims to the last 90 seconds, so it takes **90 seconds to fill**, then scrolls.
-- It keeps going for about **15.6 hours** before running out of readings, at which point the chart
-  simply stops updating.
-- **Live** restarts the replay from the beginning of the active window. **Bulk Load** drops the
-  whole dataset onto the chart at once and stops the polling.
-
-Don't leave it running while the notebook's Step 2 is streaming — both write to the same Neon
-database, and the free tier limits concurrent connections.
-
-## Rebuilding the database from scratch
-
-Only needed for a fresh Neon project. `migrate_schema.py` runs in four steps so the result can be
-checked before anything is replaced:
-
-```bash
-uv run python src/database-service/migrate_schema.py create   # build robot_readings_new
-uv run python src/database-service/migrate_schema.py load     # insert the 39,672 CSV rows
-uv run python src/database-service/migrate_schema.py verify   # compare counts and time span
-uv run python src/database-service/migrate_schema.py swap     # rename into place
-```
-
-Run `verify` before `swap` — it prints `MATCH` or `MISMATCH`. The swap keeps the previous table as
-`robot_readings_old` rather than dropping it.
-
-## Notes on running Step 2
-
-Step 2 streams at the specified 2-second interval, so that cell takes about a minute. It writes its
-demo readings to the shared table and deletes them again afterwards, so the notebook can be re-run
-without the data drifting.
+- **Very short history:** the source covers about 22.4 hours, not weeks or months. It cannot establish a wear trend or validate early warning for the torque-tube failure described by the project use case.
+- **Weak time-only fit:** current depends on robot activity and workload, not simply time. The low fit scores and negative holdout $R^2$ show that these lines should not be interpreted as accurate current forecasts.
+- **No labeled failures:** there is no ground truth for actual faults. Calibration event counts and synthetic tests measure rule behavior, not real-world precision, recall, or false-alarm rate.
+- **Idle versus stopped production:** 64.2% of rows are fully idle, and a multi-hour production pause appears in the data. Current alone cannot reliably distinguish a healthy idle robot from an unavailable production line.
+- **Synthetic data is an empirical test fixture:** it is derived from reordered training blocks and injected changes, not independent real-world operation or a confirmed failure record.
+- **Current is not energy:** the dataset contains current in amperes only. Voltage, phase, power factor, and other conversion inputs are unavailable, so energy consumption in kWh is not calculated.
+- **Database dependency:** model training currently reads Neon rather than running from the CSV alone. Credentials, network access, and the expected canonical table are required for a complete notebook run.

@@ -11,6 +11,7 @@ wheels/
 .env
 .env.local
 .config
+.Ds_Store
 
 # Local working notes
 src/web-ui/PLAN_EXEC.md
